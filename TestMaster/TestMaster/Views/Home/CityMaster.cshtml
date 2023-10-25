@@ -1,0 +1,178 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+@{
+    ViewData["Title"] = "City Master";
+}
+<div class="col-m-4 bg-light text-right">
+    <input class="btn btn-primary" type="button" id="plus" value="+" onclick="Clickk()" />
+</div>
+<div class="col-m-4 bg-light text-right">
+    <input class="btn btn-primary" type="button" id="minus" value="-" onclick="Minus()" />
+</div>
+<div><center><h3><b>CITY MASTER</b></h3></center></div>
+<div id="divv">
+    <div class="container">
+        <form id="form" method="post">
+            <div>
+                <div>
+                    <label>Country</label>
+                    <select class="form-control" id="SelCountry">
+                        <option value="">select</option>
+                    </select>
+                </div>
+                <div>
+                    <label>State</label>
+                    <select class="form-control" id="SelState">
+                        <option value="">select</option>
+                    </select>
+                </div>
+                <div>
+                    <label>District</label>
+                    <select class="form-control" id="SelDistrict">
+                        <option value="">select</option>
+                    </select>
+                </div>
+                <div>
+                    <label>City</label>
+                    <input class="form-control" type="text" id="CityName" />
+                </div>
+                <div class="col m-4">
+                    <input class="btn btn-primary" type="button" id="save" value="save" onclick="City()" />
+                </div>
+            </div>
+
+        </form>
+        <div id="table"></div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#form").hide();
+        $("#minus").hide();
+        $("#table").show();
+    });
+    function Clickk(){
+        $("#form").show();
+        $("#plus").hide();
+        $("#minus").show();
+       
+    }
+    function Minus() {
+        $("#form").hide();
+        $("#minus").hide();
+        $("#plus").show();
+    }
+    $("#CityName").keyup(function () {
+        //alert(this.value)
+        var a = this.value
+        var b = a.replace(/[0-9]+/g, '');
+        //alert(b)
+        $("#CityName").val(b);
+        return false
+    });
+    SelCount();
+    function SelCount() {
+
+        $.ajax({
+            url: "/Master/SelectCountry",
+            method: 'GET',
+            dataType: 'JSON',
+            success: function (data) {
+                $("#SelCountry").html(data.success);
+
+            }
+        });
+    }
+    $(document).on("change", "#SelCountry", function () {
+        var id = $(this).val();
+        //alert(id)
+        $.ajax({
+            url: "/Master/SelectState?id=" + id,
+            method: 'POST',
+            dataType: 'JSON',
+            success: function (data) {
+                $("#SelState").html(data.success);
+            }
+        });
+    });
+    $(document).on("change", "#SelState", function () {
+        var id = $(this).val();
+      //  alert(id)
+        $.ajax({
+            url: "/Master/SelectDistrict?id=" + id,
+            method: 'POST',
+            dataType: 'JSON',
+            success: function (data) {
+                $("#SelDistrict").html(data.success);
+            }
+        });
+    });
+
+
+    function City() {
+        var city =
+        {
+
+            'DistrictType': $("#SelDistrict").val(),
+            'City': $("#CityName").val(),
+        }
+        $.ajax({
+            url: "/Master/City",
+            method: 'POST',
+            dataType: 'JSON',
+            data: city,
+            success: function (data) {
+                if (data.success == 1) {
+                    alert("District inserted");
+                    $("#SelDistrict").val("");
+                    $("#CityName").val("");
+                    $("#SelState").val("");
+                    $("#SelCountry").val("");
+                    show();
+                }
+                else {
+                    alert("District not inserted");
+                    show();
+
+                }
+
+            }
+        });
+    }
+    show();
+    function show() {
+        $.ajax({
+            url: "/Master/CityShow",
+            method: 'POST',
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.success != "") {
+                    $("#table").html(data.success);
+                }
+            }
+
+        });
+    }
+    function Deleted(id) 
+    {
+        if (window.confirm("Do you want to delete?")) 
+        {
+            $.ajax({
+                url: "/Master/Delete?id="+ id,
+                method: 'POST',
+                dataType: 'JSON',
+                success: function (data) {
+                    if (data.success == 1) {
+                        alert("Deleted Successfully")
+                        show();
+                    }
+                }
+            });
+        }
+    }
+
+</script>

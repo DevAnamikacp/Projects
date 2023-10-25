@@ -1,0 +1,300 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div>
+    <div class="container">
+        <form id="form" method="post">
+            <div>
+                <div>
+                    <label for="text">Teacher Register No</label>
+                    <input class="form-control" type="text" id="regNo" onblur="TRegnumber()"  />
+                </div>
+                <div>
+                    <label for="name">Teacher Name</label>
+                    <input class="form-control" type="text" id="tregName" readonly />
+                </div>
+                <div>
+                    <label for="eml">Teacher Email</label>
+                    <input class="form-control" type="text" id="email" readonly />
+                </div>
+                <div>
+                    <label for="class">Class</label>
+                    <select class="form-select" type="text" id="Class" onchange="SUbj()">
+                         <option value="">select</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="subname">Subject Name</label>
+                    <select class="form-select" type="text" id="subname">
+                    <option value="">select</option>
+                    </select>
+                </div>
+               @* <div class="form-group col-2">
+                    <label for="number">Mark</label>
+                    <input class="form-control" type="text" id="mark" onkeyup="TotalMark()" />
+                </div>
+                <div class="form-group col-2">
+                    <label for="number">Internal mark</label>
+                    <input class="form-control" type="text" id="inmark" onkeyup="TotalMark()" />
+                </div>
+                <div class="form-group col-2">
+                    <label for="number">Total  mark</label>
+                    <input class="form-control" type="text" id="totmark" />
+                </div>*@
+                <div class="col m-4">
+                    <input class="btn btn" type="button" id="save" value="save" onclick="Insert()" />
+                </div>
+                <div class="col m-4">
+                    <input class="btn btn" type="button" id="update" value="update" onclick="UPdate()" />
+                </div>
+                <div class="col m-4">
+                    <input class="btn btn" type="button" id="delete" value="delete" onclick="Delete()" />
+                </div>
+                <input type="hidden" id="id" />
+
+            </div>
+        </form>
+        <div id="table"></div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    show();
+    
+    $("#delete").hide();
+    $("#update").hide();
+    $("#save").show();
+    var a="";
+    //$("#regNo").on('blur', function () 
+    //{
+    function TRegnumber()
+    {
+        var Treg = $("#regNo").val();
+        $.ajax({
+            url: "/Mark/Teachreg?Treg=" + Treg,
+            method: "POST",
+            dataType: 'JSON',
+            success: function(data)
+            {
+                $("#tregName").val(data.tname);
+                $("#email").val(data.email);
+                a=data.id;
+            }
+        });
+    //});
+    }
+    ClAs();
+   // SUbj();
+    show();
+    $("#update").hide();
+    $("#delete").hide();
+    function ClAs(x = "") {
+
+        $.ajax({
+            url: "/Mark/selCtlass?x=" + x,
+            method: 'GET',
+            dataType: 'JSON',
+            success: function (data) {
+                $("#Class").html(data.success);
+            }
+        });
+    }
+    $("#update").hide();
+    $("#delete").hide();
+    ////////////////////////////////////////////////////////////
+    function SUbj(x = "") {
+        var id = $("#Class").val();
+        alert(id)
+        //alert(id+"++++++++++++++++++++"+x)
+        $.ajax({
+            url: "/Mark/selCtsub?id="+id+"&x="+x,
+            method: 'GET',
+            dataType: 'JSON',
+            success: function(data){
+                $("#subname").html(data.success);
+            }
+        });
+    }
+    show();
+    function Insert() {
+        if ($("#regNo").val() == "")
+        {
+            alert("Register number cannot be null");
+            return false;
+        }
+        if ($("#tregName").val() == "") {
+            alert("Register name cannot be null");
+            return false;
+        }
+        //if ($("#Class").val() == "")
+        //{
+        //    alert("Class  cannot be null");
+        //    return false;
+        //}
+        var insert = 
+        {
+            'TeachId':a,
+            'SubId':$("#subname").val(),
+            'ClassId':$("#Class").val(),
+            //'Mark':$("#mark").val(),
+            //'InMark':$("#inmark").val(),
+            //'TotMark':$("#totmark").val()               
+        }
+        $.ajax({
+            url: "/Mark/Insert",
+            method: "POST",
+            dataType: 'JSON',
+            data: insert,
+            success: function (data) {
+                if (data.success == 1) {
+                    alert("data added");
+                    $("#regNo").val("");
+                    $("#tregName").val("");
+                    $("#email").val("");
+                    $("#subname").val("");
+                    $("#Class").val("");
+                    //$("#mark").val("");
+                    //$("#inmark").val("");
+                    //$("#totmark").val("");
+                  
+                    show();
+                }
+                else {
+                    alert("data not added");
+                }
+                show();
+            }
+        });
+    }
+
+
+    function show() {
+        $.ajax({
+            url: "/Mark/show",
+            method: "GET",
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.success != "") {
+                    $("#table").html(data.success);
+                }
+            }
+        });
+    }
+    //ADDING TOTAL MARK
+    //function TotalMark()
+    //{
+    //    var a = $("#mark").val();
+    //    var b = $("#inmark").val();
+    //    var c=Number(a)+Number(b);
+    //    $("#totmark").val(c);
+       
+    //}
+
+    function Edit(id) 
+    {
+       // alert(id)
+        $("#delete").show();
+        $("#update").show();
+        $("#save").hide();
+        $.ajax({
+            url: "/Mark/edite?id=" + id,
+            method:"POST",
+            dataType:'JSON',
+            success: function (data) {
+                ClAs(data.clss);
+                $("#regNo").val(data.regno);
+                TRegnumber();
+               // $("#email").val(data.eml);
+               // $("#tregName").val(data.tname);
+               // $("#subname").val(data.sbname);
+                
+             //   var b=Number(data.clss);
+               // alert(data.sub)
+               $("#Class").val(data.clss)
+                SUbj(data.sub);
+                //$("#mark").val(data.mark);
+                //$("#inmark").val(data.inmark);
+                //$("#totmark").val(data.totmark);
+                $("#id").val(data.id);
+              // alert(data.clss+"_____________________")
+               // $("#subname").val().select();
+            }
+        });
+    }
+    function UPdate() {
+        var update = {
+            'Id': $("#id").val(),
+            'TeachId': a,            
+            'ClassId': $("#Class").val(),
+            'SubId': $("#subname").val(),
+            //'Mark': $("#mark").val(),
+            //'InMark': $("#inmark").val(),
+            //'TotMark': $("#totmark").val()
+        }
+        $.ajax({
+            url: "/Mark/Update",
+            method: "POST",
+            dataType: 'JSON',
+            data: update,
+            success: function (data) {
+                if (data.success == 1) {
+                    alert("data updated");
+                    $("#regNo").val("");
+                    $("#tregName").val("");
+                    $("#email").val("");
+                    $("#subname").val("");
+                    $("#Class").val("");
+                    //$("#mark").val("");
+                    //$("#inmark").val("");
+                    //$("#totmark").val("");
+                    $("#id").val("");
+                    $("#save").show();
+                    $("#delete").hide();
+                    $("#update").hide();
+                    show();
+                }
+                else {
+                    alert("data not updated");
+                }
+            }
+
+        });
+
+    }
+    function Delete() {
+        if (window.confirm("Do you want to delete?")) {
+            var id = $("#id").val();
+            $.ajax({
+                url: '/Mark/Delete?id=' + id,
+                method: "GET",
+                dataType: 'JSON',
+                success: function (data) {
+                    if (data.success == 1) {
+                        alert("data deleted");
+                        $("#regNo").val("");
+                        $("#tregName").val("");
+                        $("#email").val("");
+                        $("#subname").val("");
+                        $("#Class").val("");
+                        //$("#mark").val("");
+                        //$("#inmark").val("");
+                        //$("#totmark").val("");
+                        $("#id").val("");
+                        $("#save").show();
+                        $("#delete").hide();
+                        $("#update").hide();
+                        show();
+                    }
+                    else {
+                        alert("data not deleted")
+                    }
+                }
+            });
+
+        }
+    }
+ 
+
+  
+</script>

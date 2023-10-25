@@ -1,0 +1,189 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div>
+    <div class="container">
+        <form id="form" method="post">
+            <div class="form-group ">
+                <label for="number">Class</label>
+                <select class="form-select" type="text" id="class"  />
+                </select>
+            </div>
+            <div class="form-group ">
+                <label for="name">Subject Name</label>
+                <input class="form-control" type="text" id="subname" />
+            </div>
+            <div class="form-group ">
+                <label for="name">Subject code</label>
+                <input class="form-control" type="text" id="subcode" />
+            </div>
+            <div class="form-group ">
+                <input type="button" value="save" id="save" onclick="Insert()" />
+            </div>
+            <div class="form-group ">
+                <input type="button" value="update" id="update" onclick="Udate()" />
+            </div>
+            <div class="form-group ">
+                <input type="button" value="delete" id="delete" onclick="Delete()" />
+            </div>
+            <div id="table"></div>
+            <input type="hidden" id="id" />
+        </form>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    Class();
+    show();
+    $("#update").hide();
+    $("#delete").hide();
+    function Class(x = "")
+    {
+        $.ajax({
+            url: "/Subject/selClass?x=" + x,
+            method: 'GET',
+            dataType: 'JSON',
+            success: function (data) {
+                $("#class").html(data.success);
+            }
+        });
+    }
+    function Insert() {
+        if ($("#subname").val() == "") {
+            alert("Subject name cannot be null");
+            return false;
+        }
+        if ($("#subcode").val() == "") {
+            alert("Subject code  cannot be null");
+            return false;
+        }
+        var insert =
+        {
+            'ClassId': $("#class").val(),
+            'SubName': $("#subname").val(),
+            'SubCode': $("#subcode").val(),
+            
+        }
+        $.ajax({
+            url: "/Subject/Insert",
+            method: "POST",
+            dataType: 'JSON',
+            data: insert,
+            success: function (data) {
+                if (data.success == 1) {
+                    alert("data added");
+                    $("#class").val("");
+                    $("#subname").val("");
+                    $("#subcode").val("");                 
+                    $("#update").hide();
+                    $("#delete").hide();
+                    show();
+                }
+                else {
+                    alert("data deleted");
+                }
+            }
+
+        });
+    }
+    $("#subname").keyup(function () {
+        //alert(this.value)
+        var a = this.value
+        var b = a.replace(/[0-9]+/g, '');
+        //alert(b)
+        $("#subname").val(b);
+        return false
+    });
+
+    function show() {
+        $.ajax({
+            url: "/Subject/show",
+            method: "POST",
+            dataType: 'JSON',
+            success: function (data) {
+                $("#table").html(data.success);
+            }
+        });
+
+    }
+
+    function Edit(id) {
+        alert(id)
+        $.ajax({
+            url: "/Subject/Edit?id=" + id,
+            method: "POST",
+            dataType: 'JSON',
+            success: function (data) { 
+                Class(data.cls);
+                $("#id").val(data.idd);
+                $("#subname").val(data.name);
+                $("#subcode").val(data.code);
+                $("#save").hide();
+                $("#update").show();
+                $("#delete").show();
+            }
+        });
+    }
+
+    function Udate() {
+        var update =
+        {
+            'ClassId': $("#class").val(),
+            'SubName': $("#subname").val(),
+            'SubCode': $("#subcode").val(),
+            'Id': $("#id").val(),
+        }
+        $.ajax({
+            url: "/Subject/updated",
+            method: "POST",
+            dataType: 'JSON',
+            data: update,
+            success: function (data) {
+                if (data.success == 1) {
+                    alert("data updated");
+                    $("#id").val("");
+                    $("#class").val("");
+                    $("#subname").val("");
+                    $("#subcode").val("");
+                    $("#update").hide();
+                    $("#delete").hide();
+                    $("#save").show();
+                    show();
+                }
+                else {
+                    alert("data not update");
+                }
+            }
+        });
+
+    }
+    function Delete() {
+        if (window.confirm("Do you want to delete?")) {
+            var id = $("#id").val();
+            $.ajax({
+                url: "/Subject/Deleted?id=" + id,
+                method: "POST",
+                dataType: 'JSON',
+                success: function (data) {
+                    if (data.success == 1) {
+                        alert("Deleted");
+                        $("#class").val("");
+                        $("#subname").val("");
+                        $("#subcode").val("");
+                        $("#update").hide();
+                        $("#delete").hide();
+                        $("#save").show();
+                        show();
+                    }
+                    else {
+                        alert("data not deleted");
+                    }
+                }
+            });
+        }
+
+    }
+
+</script>

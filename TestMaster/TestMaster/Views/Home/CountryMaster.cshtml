@@ -1,0 +1,116 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+    <div class="col-m-4 bg-light text-right">
+    <input class="btn btn-primary"  type="button" id="plus" value="+" onclick="Clickk()" />
+    </div>
+<div class="col m-4 bg-light text-right">
+    <input class="btn btn-primary" type="button" id="minus" value="-" onclick="Minus()" />
+</div>
+    <div><center><h3><b>COUNTRY MASTER</b></h3></center></div>
+<div id="divv">
+    <div class="container">
+        <form id="form" method="post">
+            <div>
+                <div>
+                    <label for="text">Country Name</label>
+                    <input class="form-control" type="text" id="CName"/>
+                </div>
+                <div class="col m-4">
+                    <input class="btn btn-primary" type="button" id="save" value="save" onclick="CounTry()" />
+                </div>
+            </div>
+        </form>
+        <div style="padding-left:150px" id="table"></div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#form").hide();
+        $("#minus").hide();
+        $("#table").show();
+    });
+    function Clickk() {
+        $("#form").show();
+        $("#plus").hide();
+        $("#minus").show();
+
+    }
+    function Minus() {
+        $("#form").hide();
+        $("#minus").hide();
+        $("#plus").show();
+    }
+  show();
+    $("#CName").keyup(function () {
+        //alert(this.value)
+        var a = this.value
+        var b = a.replace(/[0-9]+/g, '');
+        //alert(b)
+        $("#CName").val(b);
+        return false
+    });
+    function CounTry()
+    {
+        var country=
+        {
+            'Country': $("#CName").val(),
+        }
+        $.ajax({
+            url: "/Master/Country",
+            method: 'GET',
+            dataType: 'JSON',
+            data: country,
+            success: function (data) 
+            {
+                if(data.success==1)
+                {
+                    alert("Country inserted");
+                    $("#CName").val("");
+                    show();
+                }
+                else
+                {
+                     alert("Country not inserted");
+                    show();
+                }
+                   
+            }
+        });
+    }
+    show();
+    function show() {
+        $.ajax({
+            url: "/Master/CounShow",
+            method: 'POST',
+            dataType: 'JSON',
+            success: function (data)
+            {
+                if(data.success != "") 
+                {
+                    $("#table").html(data.success);
+                }
+            }
+        
+        });
+    }
+    function Deleted(id) {
+        if (window.confirm("Do you want to delete?")) {
+            $.ajax({
+                url: "/Master/Del?id=" + id,
+                method: 'POST',
+                dataType: 'JSON',
+                success: function (data) {
+                    if (data.success == 1) {
+                        alert("Deleted Successfully")
+                        show();
+                    }
+                }
+            });
+        }
+    }
+</script>

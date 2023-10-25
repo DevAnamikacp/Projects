@@ -1,0 +1,61 @@
+﻿@inject IHttpContextAccessor contxt;
+
+       
+
+        <div>
+            <input type="hidden" id="idd" value=@contxt.HttpContext.Session.GetInt32("Id") />
+        </div>
+<div class="col-sm-6">
+    <div>
+        <label>Active/Deactive?</label>
+    </div>
+    <input type="radio" id="endable" name="Donner" value="1" />
+    <label for="Donner">Enable</label><br>
+    
+    <input type="radio" id="disable" name="Donner" value="0" />
+    <label for="Donner">Disable</label><br>
+</div>
+<div class="bg-light text-center">
+    <input class="btn btn-primary" type="button" id="save" value="Submit" onclick="Insert()" />
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+      
+    function Insert() {
+        var a = ($("#endable").is(":checked"));
+        var b = ($("#disable").is(":checked"));
+           alert(a)
+           alert(b)
+           if(a == true){
+             var radio = 1
+            
+           }
+           if(b == true){
+               var radio = 0
+           }
+            var status =
+            {
+            'Status': radio,
+            'LoginId': $("#idd").val(),
+            }
+            $.ajax({
+            url: "/Master/Status",
+               method: 'POST',
+               dataType: 'JSON',
+               data: status,
+               success: function (data) {
+                   if (data.success == true) {
+                        alert("Data inserted");
+                      
+                   }
+                   else
+                   {
+                         alert("Data not inserted");
+                   }
+               }
+            });
+    }
+
+</script>
+
+

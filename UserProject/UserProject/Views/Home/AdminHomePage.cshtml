@@ -1,0 +1,56 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div>
+    <h1>User Detailes</h1>
+    <div id="table"></div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    
+    show();
+    function show()
+    {
+        $.ajax({
+            url: "/Signin/show",
+            method: "GET",
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.success != "") 
+                {
+                    $("#table").html(data.success);
+                }
+            }
+        });
+    }
+    function Blockusr(id) {
+        //alert(id)
+        $.ajax({
+            url: "/Signin/blocked?id=" + id,
+            method:"POST",
+            dataType:'JSON',
+            success: function (data)
+            {
+                show();
+                alert("User Blocked Successfully")
+            }
+        });
+    }
+    function Unblockusr(id) {
+       // alert(id)
+        $.ajax({
+            url: "/Signin/unblocked?id=" + id,
+            method:"POST",
+            dataType:'JSON',
+            success: function (data)
+            {
+                alert("User Unblocked Successfully")
+                show();
+            }
+        });
+    }
+                
+</script>

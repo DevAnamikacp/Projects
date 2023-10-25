@@ -1,0 +1,162 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div>
+    <div class="container">
+        <form id="form" method="post">
+            <div class="row-mb-2">
+                <div>
+                    <label for="text">Class</label>
+                    <input class="form-control" type="text" id="Class"  />
+                </div>
+                <div>
+                    <input type="button" value="save" id="save" onclick="Insert()" />
+                    <input type="button" value="Update" id="update" onclick="Update()" />
+                    <input type="button" value="Delete" id="delete" onclick="Delete()" />
+                </div>
+                <input type="hidden" id="id" />
+
+            </div>
+        </form>
+        <div id="table"></div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    Show();
+    $("#delete").hide();
+    $("#update").hide();
+    $("#save").show();
+    function Insert()
+    {
+        if ($("#Class").val() == "") {
+            alert("Class  cannot be null");
+            return false;
+        }
+        var insert=
+        {
+        'Class': $("#Class").val(),
+        }
+        $.ajax({
+            url:'/Class/inser',
+            method:'POST',
+            dataType:'JSON',
+            data: insert,
+            success:function(data)
+            {
+            if(data.success==1)
+            {
+                alert("data insert");
+                $("#Class").val("");
+                Show();
+                    
+            }
+            else
+            {
+                alert("data not insert");
+            }
+            }
+       });
+    }
+   
+    $("#Class").keyup(function(){
+        //alert(this.value)
+       var a=this.value
+       var  b= a.replace(/[0-9]+/g, '');
+       //alert(b)
+        $("#Class").val(b);
+       return false
+    });
+    function Show()
+    {
+        $.ajax({
+            url:'/Class/show',
+            method:'POST',
+            dataType:'JSON',
+            success:function(data)
+            {
+                $("#table").html(data.success);
+            }
+        });
+    }
+    function Edit(id)
+    {
+        alert(id)
+        $.ajax({
+            url:'/Class/edited?id='+id,
+            method: 'POST',
+            dataType: 'JSON',
+            success:function(data)
+            {
+                $("#id").val(data.id);
+                $("#Class").val(data.lass);
+                $("#delete").show();
+                $("#update").show();
+                $("#save").hide();
+            }
+        });
+    }
+    
+    function Update()
+    {
+        var updated =
+        {
+            'Id':$("#id").val(),
+            'Class': $("#Class").val(),
+        }
+        $.ajax({
+            url: '/Class/Updated',
+            method: 'POST',
+            dataType: 'JSON',
+            data: updated,
+            success: function (data) {
+                if (data.success == 1) {
+                    alert("data updated");
+                    $("#id").val("");
+                    $("#Class").val("");
+                    $("#save").show();
+                    $("#delete").hide();
+                    $("#update").hide();
+                    Show();
+                }
+                else {
+                    alert("data not updated");
+                }
+            }
+        });
+    }
+    
+    function Delete()
+    {
+        if (window.confirm("Do you want to delete?")) 
+        {
+            var id = $("#id").val();
+            $.ajax({
+                url: '/Class/Delete?id=' + id,
+                method: "GET",
+                dataType: 'JSON',
+                success: function(data)
+                {
+                    if(data.success == 1)
+                    {
+                    alert("data deleted");
+                    $("#Class").val("");
+                    $("#id").val("");
+                    $("#save").show();
+                    $("#delete").hide();
+                    $("#update").hide();
+                    Show();
+                    }
+                    else
+                    {
+                    alert("data not deleted")
+                    }
+                }
+            });
+
+        }
+    }
+</script>
+    

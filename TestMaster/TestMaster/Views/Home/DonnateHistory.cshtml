@@ -1,0 +1,22 @@
+﻿
+<div class="container">
+    <div id="table"></div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    show();
+    function show() {
+        $.ajax({
+            url: "/Master/UserDetailes",
+            method: 'POST',
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.success != "") {
+                    $("#table").html(data.success);
+                }
+            }
+
+        });
+    }
+
+</script>

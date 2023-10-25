@@ -1,0 +1,151 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="col-m-4 bg-light text-right">
+    <input class="btn btn-primary" type="button" id="plus" value="+" onclick="Clickk()" />
+</div>
+<div class="col-m-4 bg-light text-right">
+    <input class="btn btn-primary" type="button" id="minus" value="-" onclick="Minus()" />
+</div>
+
+    <div><center><h3><b>DISTRICT MASTER</b></h3></center></div>
+<div id="divv">
+    <div class="container">
+        <form id="form">
+            <div>
+                <div>
+                    <label>Country</label>
+                    <select class="form-control" id="SelCountry">
+                        <option value="">select</option>
+                    </select>
+                </div>
+                <div>
+                    <label>State</label>
+                    <select class="form-control" id="SelState">
+                        <option value="">select</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="text">District Name </label>
+                    <input class="form-control" type="text" id="DistName" />
+                </div>
+                <div class="col m-4">
+                    <input class="btn btn-primary" type="button" id="save" value="save" onclick="District()" />
+                </div>
+            </div>
+        </form>
+        <div  id="table"></div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#form").hide();
+        $("#minus").hide();
+        $("#table").show();
+    });
+    function Clickk() {
+        $("#form").show();
+        $("#plus").hide();
+        $("#minus").show();
+
+    }
+    function Minus() {
+        $("#form").hide();
+        $("#minus").hide();
+        $("#plus").show();
+    }
+    SelCount();
+    function SelCount() {
+        $.ajax({
+            url: "/Master/SelectCountry",
+            method: 'GET',
+            dataType: 'JSON',
+            success: function (data) {
+                $("#SelCountry").html(data.success);
+               
+            }
+        });
+    }
+    $(document).on("change", "#SelCountry",function(){
+        var id = $(this).val();
+        alert(id)
+        $.ajax({
+            url: "/Master/SelectState?id=" + id,
+            method: 'POST',
+            dataType: 'JSON',
+            success: function (data) {
+                $("#SelState").html(data.success);
+            }
+        });
+    });
+    $("#DistName").keyup(function () {
+        //alert(this.value)
+        var a = this.value
+        var b = a.replace(/[0-9]+/g, '');
+        //alert(b)
+        $("#DistName").val(b);
+        return false
+    });
+
+    function District() {
+        var district =
+        {
+           
+            'StateType': $("#SelState").val(),
+            'District': $("#DistName").val(),
+        }
+        $.ajax({
+            url: "/Master/District",
+            method: 'POST',
+            dataType: 'JSON',
+            data: district,
+            success: function (data) {
+                if (data.success == 1) {
+                    alert("District inserted");
+                    $("#SelState").val("");
+                    $("#DistName").val("");
+                    $("#SelCountry").val("");
+                    show();
+                }
+                else {
+                    alert("District not inserted");
+                    show();
+
+                }
+
+            }
+        });
+    }
+    show();
+    function show() {
+        $.ajax({
+            url: "/Master/DistrictShow",
+            method: 'POST',
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.success != "") {
+                    $("#table").html(data.success);
+                }
+            }
+
+        });
+    }
+    function Deleted(id) {
+        if (window.confirm("Do you want to delete?")) {
+            $.ajax({
+                url: "/Master/Deleting?id=" + id,
+                method: 'POST',
+                dataType: 'JSON',
+                success: function (data) {
+                    if (data.success == 1) {
+                        alert("Deleted Successfully")
+                        show();
+                    }
+                }
+            });
+        }
+    }
+</script>

@@ -1,0 +1,175 @@
+﻿@inject IHttpContextAccessor contxt;
+<div class="container">
+
+    <!-- /.card-header -->
+
+
+    <form>
+        <div>
+            <input type="hidden" id="id" value=@contxt.HttpContext.Session.GetInt32("Id") />
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Country</label>
+                <select class="form-control" id="SelCountry">
+                    <option value=""></option>
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <label>State</label>
+                <select class="form-control" id="SelState">
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <label>District</label>
+                <select class="form-control" id="SelDistrict">
+                    <option value=""></option>
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <label>City</label>
+                <select class="form-control" id="SelCty">
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Name</label>
+                <input type="text" class="form-control" id="usname"  placeholder="Enter your name">
+            </div>
+            <div class="col-sm-6">
+                <label>Phone No</label>
+                <input type="text" class="form-control" id="phnno" placeholder="Enter your phone number">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Date Of Birth:</label>
+                <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                    <input type="text" id="dob" class="form-control datetimepicker-input" data-target="#reservationdate" />
+                
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label>Blood Group</label>
+                <select class="form-control" id="SelBlood">
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6"></div>
+            <div class="col-sm-6">
+                <div>
+                    <label>Have you donated previously?</label>
+                </div>
+                <input type="radio" id="yes" name="Donner" value="Yes" />
+                <label for="Donner">Yes</label><br>
+                <input type="radio" id="no" name="Donner" value="No" />
+                <label for="Donner">No</label><br>
+            </div>
+        </div>
+
+        <div class="bg-light text-center">
+            <input class="btn btn-primary" type="button" id="save" value="update" onclick="UPdate()" />
+        </div>
+    </form>
+    <!-- /.card-body -->
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script>
+    $("#dob").datepicker();
+//SelCount();
+//        //check();
+// function SelCount(x = "")
+// {
+//    $.ajax({
+//    url: "/Master/SelectCountry?x="+x,
+//    method:'GET',
+//    dataType: 'JSON',
+//    success: function (data)
+//    {
+//    $("#SelCountry").html(data.success);
+//    }
+//   });
+// }
+    
+ selectDet();
+    function selectDet() {
+        var id = $("#id").val();
+        $.ajax({
+            url: "/Master/selebyid?id=" + id,
+            method: "POST",
+            dataType: 'JSON',
+            success: function (data) {
+                $("#SelCountry").html(data.country);
+                $("#SelState").html(data.state);
+                $("#SelDistrict").html(data.district);
+                $("#SelCty").html(data.city);
+                $("#SelBlood").html(data.blood);
+                $("#phnno").val(data.phno);
+                //alert(data.birthdate)
+                $("#dob").val(data.birthdate);
+                $("#usname").val(data.name);
+               // alert(data.donner)
+                if (data.donner == "true") {
+                   // alert("A")
+                    $("#yes").prop('checked', true);
+                }
+                if (data.gender == "false") {
+                    $("#no").prop('checked', true);
+                }
+              
+            }
+        });
+    }
+    function UPdate() 
+    {
+        var a = ($("#yes").is(":checked"));
+        var b = ($("#no").is(":checked"));
+        if (a == true) {
+            var radio = a
+        }
+        if (b == true) {
+            var radio = b
+        }
+        var update =
+        {
+
+            'Id': $("#id").val(),           
+            'LoginId': $("#id").val(),
+            'CountryType': $("#SelCountry").val(),
+            'StateType': $("#SelState").val(),
+            'DistrictType': $("#SelDistrict").val(),
+            'CityType': $("#SelCty").val(),
+            'BloodType': $("#SelBlood").val(),
+            'PhnNo': $("#phnno").val(),
+            'DoB': $("#dob").val(),
+            'Donnated': radio,
+          
+           
+        }
+        $.ajax({
+            url: "/Master/Update",
+            method: "POST",
+            dataType: 'JSON',
+            data: update,
+            success: function (data) {
+                if (data.success == true) {
+                    alert("data updated");
+                }
+                else {
+                    alert("data not updated");
+                }
+            }
+
+        });
+
+    }
+</script>

@@ -1,0 +1,183 @@
+﻿
+@{
+    ViewData["Title"] = "Home Page";
+}
+@{
+    Layout = "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | Log in</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="../../plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="../../index2.html"><b>Admin</b>LTE</a>
+        </div>
+        <!-- /.login-logo -->
+        <div class="card">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Sign in to start your session</p>
+
+                <form  method="post">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="username" id="username">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" placeholder="Password" id="pswd">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                           
+                        </div>
+                    </div>
+                   
+                        <!-- /.col -->
+                    <div class="col-m-4 bg-light text-center">
+                        <input type="button" class="btn btn-primary" id="save" value="Login" onclick="Check()">
+                    </div>
+                    <div>  <!-- /.col -->
+                     <a asp-controller="Home" asp-action="SignupMaster" class="nav-link">
+                        <p>Registered?</p>
+                     </a>
+                    </div>
+                    <div>
+                        <!-- /.col -->
+                        <a asp-controller="Home" asp-action="ChangePassword" class="nav-link">
+                            <p>Forgotten Password?</p>
+                        </a>
+                    </div>
+                </form>
+
+               
+            </div>
+            <!-- /.login-card-body -->
+        </div>
+    </div>
+    <!-- /.login-box -->
+    <!-- jQuery -->
+    <script src="../../plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="../../dist/js/adminlte.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script>
+        function Check() {
+            var checked =
+            {
+                'UserName': $("#username").val(),
+                'Password': $("#pswd").val(),
+            }
+            $.ajax({
+                url: "/Master/Checked",
+                method: 'GET',
+                dataType: 'JSON',
+                data: checked,
+                success: function (data) {
+                    if (data.success == true)
+                    {
+                        if (data.val == 1) {
+                           // alert("Hello");
+                           // alert(data.userid);
+                            location.replace("/Home/HomePage")
+                        }
+                        if (data.val == 2) {
+                            // alert("Hello")
+                            location.replace("/Home/UserProfile")
+                        }
+                        if (data.val == 3) {
+                             alert("Blocked")
+                        }
+                        //else
+                        //{
+                        //    alert("false");
+                        //}
+                    }
+                    else {
+                        alert("invalid")
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
+
+@*<div>
+    <div class="container">
+        <form id="form" method="post">
+            <div>
+                <div>
+                    <label for="text">User Name</label>
+                    <input class="form-control" type="text" id="username" />
+                </div>
+                <div>
+                    <label for="eml">Password</label>
+                    <input class="form-control" type="password" id="pswd" />
+                </div>
+
+                <div class="col m-4">
+                    <button class="btn btn-primary" type="button" id="save" value="Login" onclick="Check()">Save</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>*@
+@*<script src="~/lib/jquery/dist/jquery.js"></script>*@
+@*<script>
+    function Check()
+    {
+        var checked=
+        {
+        'UserName':$("#username").val(),
+        'Password': $("#pswd").val(),
+        }
+        $.ajax({
+            url:"/Master/Checked",
+            method:'GET',
+            dataType:'JSON',
+            data:checked,
+            success:function(data)
+            {
+               if(data.success==true)
+               {
+                    if ((data.val) == 1)
+                    {
+
+                        window.location.href = ("HomePage");
+                    }
+                    else
+                    {
+                     alert("false");
+                    }
+               }
+               else
+               {
+                   alert("invalid")
+               }
+            }
+        })
+    }
+</script>
+*@

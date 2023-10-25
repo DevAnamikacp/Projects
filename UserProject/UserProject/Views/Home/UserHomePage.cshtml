@@ -1,0 +1,135 @@
+﻿@inject IHttpContextAccessor contxt;
+
+
+
+@{
+    ViewData["Title"] = "User  Page";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 2px solid black;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="display-4">Welcome</h1>
+    <div>
+        <label for="eml">First Name</label>
+        <input class="form-control" type="text" id="fname">
+    </div>
+    <div>
+        <label for="eml">Last Name</label>
+        <input class="form-control" type="text" id="lname">
+    </div>
+    <div>
+        <label for="eml">Email</label>
+        <input class="form-control" type="text" id="email">
+    </div>
+    <div>
+        <label for="eml">Phone Number</label>
+        <input class="form-control" type="text" id="phnNo">
+    </div>
+    <div>
+        <input type="radio" id="male" name="Gender" value="Male" onclick="check(this.value)>
+        <label for="html">Male</label><br>
+        <input type="radio" id="female" name="Gender" value="female" onclick="check(this.value)>
+        <label for="female">Female</label><br>
+        <input type="radio" id="others" name="Gender" value="others" onclick="check(this.value)>
+        <label for="others">Others</label>
+    </div>
+    <div>
+        <input type="hidden" id="id" value=@contxt.HttpContext.Session.GetInt32("Id") />
+    </div>
+
+    <div class="col m-4">
+        <input class="btn btn-primary" type="button" id="update" value="Update" onclick="UPdate()" />
+    </div>
+</body>
+</html>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    selectDet();
+    function UPdate() {
+        var update = 
+        {
+            'Id': $("#id").val(),
+            'Fname': $("#fname").val(),
+            'Lname': $("#lname").val(),
+            'Email': $("#email").val(),
+            'PhnNo': $("#phnNo").val(),
+            'Gender': $("#radio").val(),
+        }
+        $.ajax({
+            url: "/Signin/Update",
+            method: "POST",
+            dataType: 'JSON',
+            data: update,
+            success: function (data) {
+                if (data.success == 1) {
+                    alert("data updated");
+                    //$("#id").val("");
+                    //$("#fname").val("");
+                    //$("#lname").val("");
+                    //$("#email").val("");
+                    //$("#phnNo").val("");
+                    //$("#radio").val("");
+                    $("#update").show();
+                }
+                else {
+                    alert("data not updated");
+                }
+            }
+
+        });
+
+    }
+    function check(Gender) {
+        document.getElementById("radio").value = Gender;
+    }
+    selectDet();
+    function selectDet() {
+        var id = $("#id").val();
+        $.ajax({
+            url: "/Signin/selebyid?id=" + id,
+            method: "POST",
+            dataType: 'JSON',
+            success: function (data) {
+                $("#fname").val(data.fname);
+                $("#lname").val(data.lname);
+                $("#email").val(data.email);
+                $("#phnNo").val(data.phno);
+               // $("#radio").val(data.gender);
+                $("#id").val(data.id);
+               // alert(data.gender)
+                if (data.gender == "Male") {
+                    //alert("A")
+                    $("#male").prop('checked', true);
+                }
+                if (data.gender == "female") {
+                    $("#female").prop('checked', true);
+                }
+                if (data.gender == "Others") {
+                    $("#others").prop('checked', true);
+                }
+              
+               
+            }
+        });
+    }
+</script>
+
+
+
+

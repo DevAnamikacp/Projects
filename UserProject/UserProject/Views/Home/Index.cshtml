@@ -1,0 +1,164 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div>
+    <div class="container">
+        <form id="form" method="post">
+            <div>
+                <div>
+                    <label for="text">First Name</label>
+                    <input class="form-control" type="text" id="fName"/>
+                </div>
+                <div>
+                    <label for="name">Last Name</label>
+                    <input class="form-control" type="text" id="lname"  />
+                </div>
+                <div>
+                    <label for="eml">Email</label>
+                    <input class="form-control" type="text" id="email"  />
+                </div>
+                <div>
+                    <label for="class">User Type</label>
+                    <select class="form-select" type="text" id="UserType">
+                        <option value="">select</option>
+                    </select>
+                </div>
+                <div>
+                    <input type="radio" id="gender" name="Gender" value="Male" onclick="check(this.value)">
+                <label for="html">Male</label><br>
+                    <input type="radio" id="female" name="Gender" value="female" onclick="check(this.value)">
+                <label for="female">Female</label><br>
+                    <input type="radio" id="others" name="Gender" value="others" onclick="check(this.value)">
+                <label for="others">Others</label>
+                </div>
+                <div>
+                    <label for="eml">Phone Number</label>
+                    <input class="form-control" type="text" id="phnno"  />
+                </div>
+                <div>
+                    <label for="eml">Password</label>
+                    <input class="form-control" type="password" id="pswd"  />
+                </div>
+                <div>
+                    <label for="eml">Confirm Password</label>
+                    <input class="form-control" type="password" id="cnfpswd"  />
+                </div>
+                <div>
+                    <input type="hidden" id="radio" />
+                </div>
+               
+                <div class="col m-4">
+                    <input class="btn btn-primary" type="button" id="save" value="save" onclick="Insert()" />
+                </div>
+                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Login">already have account?</a>
+              
+            </div>
+             
+        </form>
+        <div id="table"></div> 
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+  
+    UsTyp();
+    function UsTyp()
+    {
+        $.ajax({
+            url: "/Signin/selctUser",
+            method: 'GET',
+            dataType: 'JSON',
+            success: function (data)
+            {
+                $("#UserType").html(data.success);
+            }
+        });
+    }
+    function check(Gender) 
+    {
+        document.getElementById("radio").value = Gender;
+    }
+   
+
+    function Insert()
+    {
+        
+            var a = $("#pswd").val();
+            var b = $("#cnfpswd").val();
+            if (a != b)
+            {
+                alert("password is incorrect!");
+                return false;
+            }
+        
+        
+            if ($("#fName").val()=="")
+            {
+                alert("First name is null");
+                return false;
+            }
+        
+        
+            if ($("#lname").val() == "") {
+                alert("Last name is null");
+                return false;
+            }
+        
+       
+            if ($("#email").val() == "")
+            {
+                alert("Email name is null");
+                return false;
+            }
+        
+        
+            if ($("#phnno").val() == "") 
+            {
+                alert("Phone number name is null");
+                return false;
+            }
+        
+
+
+        var insert =
+        {
+            'Fname': $("#fName").val(),
+            'Lname': $("#lname").val(),
+            'Email': $("#email").val(),
+            'TypeId': $("#UserType").val(),
+            'PhnNo': $("#phnno").val(),
+            'Gender': $("#radio").val(),
+            'Pswrd': $("#pswd").val(),
+            'UserName': $("#email").val(),
+        }
+        $.ajax({
+            url: "/Signin/Insert",
+            method: "POST",
+            dataType: 'JSON',
+            data: insert,
+            success: function (data) 
+            {
+                if (data.success == 1)
+                {
+                    alert("data added");
+                    $("#fName").val("");
+                    $("#lname").val("");
+                    $("#email").val("");
+                    $("#UserType").val("");
+                    $("#phnno").val("");
+                    $("#radio").val("");
+                    $("#pswd").val("");
+                    $("#cnfpswd").val("");
+                }
+                else
+                {
+                    alert("data not added");
+                }
+              
+            }
+        });
+    }
+   
+
+</script>

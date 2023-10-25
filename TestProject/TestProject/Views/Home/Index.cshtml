@@ -1,0 +1,279 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div>
+    <div class="container">
+        <form id="form" method="post">
+        <div class="row-mb-2">
+            <div class="form-group col-2">
+                <label for="number">Register No</label>
+                    <input class="form-control" type="text" id="RegNo" onblur="Regnumber()" />
+            </div>
+            <div class="form-group col-2">
+                 <label for="number">Register Name</label>
+                    <input class="form-control" type="text" id="RegName" onblur="Selectvoila()" />
+            </div>
+            <div class="form-group col-2">
+                 <label for="number">Address</label>
+                 <input class="form-control" type="text" id="Addr" />
+            </div>
+                <div class="form-group col-2">
+                    <label for="number">Phone Number</label>
+                    <input class="form-control" type="text" id="phn" />
+                </div>
+                <div class="form-group col-2">
+                    <label for="number">Email</label>
+                    <input class="form-control" type="text" id="email" />
+                </div>
+                <div class="form-group col-2">
+                    <label for="number">Voilation</label>
+                    <select class="select-control" type="text" id="voilation" onchange="Fine()" />
+                    </select>
+                </div>
+             
+                <div class="form-group col-2">
+                    <label for="number">Fine Amount</label>
+                    <input class="form-control" type="text" id="fineAmo" />
+                </div>
+           
+                <div class="form-group col-2">
+                    <label for="number">Location</label>
+                    <input class="form-control" type="text" id="loca" />
+                </div>
+                <div class="form-group col-2">
+                    <label for="number">Police In Charge</label>
+                    <input class="form-control" type="text" id="polnam" />
+                </div>
+                <div class="form-group col-2">
+                    <label for="number">Police Id</label>
+                    <input class="form-control" type="text" id="polid" />
+                </div>
+                <div class="col m-4">
+                    <input class="btn btn" type="button" id="save" value="save" onclick="insert()"/>
+                </div>
+                   <div class="col m-4">
+                    <input class="btn btn" type="button" id="update" value="update" onclick="Update()" />
+                </div>
+                <div class="col m-4">
+                    <input class="btn btn" type="button" id="delete" value="delete" onclick="Delete()" />
+                </div>
+                <input type="hidden" id="id"/>
+
+        </div>
+        </form>
+        <div id="table"></div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    show();
+
+    $("#delete").hide();
+    $("#update").hide();
+    $("#save").show();
+//$("#RegNo").on('blur',function(){
+    function Regnumber(){
+        var reg = $("#RegNo").val();
+            $.ajax({
+                url:"/Vehicle/Reg?reg="+reg,
+                method:"POST",
+                dataType:'JSON',
+                success:function(data){
+                    $("#RegName").val(data.regname);
+                    $("#Addr").val(data.addres);
+                    $("#phn").val(data.phon);
+                    $("#email").val(data.eml);
+             
+                }
+            });
+    }
+    function Selectvoila(x=""){
+       var reg = $('#RegNo').val();
+        $.ajax({
+            url:"/Vehicle/voilatio?reg="+reg+"&x="+x,
+            method:"GET",
+            dataType:'JSON',
+            success:function(data){
+                $("#voilation").html(data.success);
+            }            
+        });
+    }
+
+
+    function Fine(){
+        var id = $('#voilation').val();
+            $.ajax({
+                url:"/Vehicle/finamount?id="+id,
+                method:"GET",
+                dataType:'JSON',
+                success:function(data){
+                $("#fineAmo").val(data.success);
+                }
+            });
+        
+    }
+    show();
+    function insert(){
+        var insert={
+            'RegNo':$("#RegNo").val(),                             //model set
+            'FineId': $("#voilation").val(),
+            'FineAmount': $("#fineAmo").val(),
+            'PoliceId': $("#polid").val(),
+            'PoliceInCharge': $("#polnam").val(),
+            'Location': $("#loca").val()
+        }
+        $.ajax({
+           url:"/Vehicle/Insert",
+           method:"POST",
+           dataType:'JSON',
+           data:insert,
+           success:function(data){
+               if(data.success==1){
+                  alert("data added");
+                    $("#RegNo").val("");
+                    $("#fine").val("");
+                    $("#fineAmo").val("");
+                    $("#polid").val("");
+                    $("#polnam").val("");
+                    $("#loca").val("");
+                    $("#RegName").val("");
+                    $("#Addr").val("");
+                    $("#phn").val("");
+                    $("#email").val("");
+                    $("#voilation").val("");
+                    show();
+                }
+                else{
+                    alert("data not added");
+                } 
+                show();
+           }
+        });
+    }
+    
+
+    function show(){
+      $.ajax({
+          url:"/Vehicle/show",
+          method:"GET",
+          dataType:'JSON',
+          success:function(data){
+              if(data.success!=""){
+                  $("#table").html(data.success);
+              }
+          }
+      });
+    }
+
+    function Edit(id){
+        //alert(id)
+        $("#delete").show();
+        $("#update").show();
+        $("#save").hide();
+        $.ajax({
+            url:"/Vehicle/edit?id="+id,
+            method:"POST",
+            dataType:'JSON',
+            success:function(data){
+                $("#RegNo").val(data.regno);
+                $("#violation").html(data.fine);
+                Regnumber();
+                Selectvoila(data.fine);
+                //$("#RegName").val(data.RegName);
+                //$("#Addr").val(data.Address);
+                //$("#phn").val(data.PhnNo);
+                //$("#email").val(data.Email);
+                //$("#voilation").val(data.Voilation);
+                    $("#fineAmo").val(data.finamo);
+                    $("#date").val(data.date);
+                    $("#loca").val(data.locat);
+                    $("#polnam").val(data.polna);
+                    $("#polid").val(data.polid);
+                    $("#id").val(data.id);             
+            }
+        });
+
+    }
+    function Update() {
+        var update = {
+            'Id':$("#id").val(),
+            'RegNo':$("#RegNo").val(),
+            'FineId': $("#voilation").val(),
+            'FineAmount':$("#fineAmo").val(),
+            'PoliceId':$("#polid").val(),
+            'PoliceInCharge':$("#polnam").val(),
+            'Location':$("#loca").val()
+        }
+        $.ajax({
+            url:"/Vehicle/update",
+            method:"POST",
+            dataType:'JSON',
+            data:update,
+            success:function(data)
+            {
+                if (data.success == 1)
+                {
+                    alert("data updated");
+                    $("#RegNo").val("");
+                    $("#fine").val("");
+                    $("#fineAmo").val("");
+                    $("#polid").val("");
+                    $("#polnam").val("");
+                    $("#RegName").val("");
+                    $("#Addr").val("");
+                    $("#phn").val("");
+                    $("#email").val("");
+                    $("#loca").val("");
+                    $("#voilation").val("");
+                    $("#id").val("");
+                    $("#save").show();
+                    $("#delete").hide();
+                    $("#update").hide();
+                    show();
+                }
+                else 
+                {
+                    alert("data not updated");
+                }
+            }
+                
+        });
+        
+    }
+    function Delete() 
+    {
+        if(window.confirm("Do you want to delete?")){
+            var id = $("#id").val();
+            $.ajax({
+                url:"/Vehicle/Delete?id="+id,
+                method:"GET",
+                dataType:'JSON',
+                success:function(data){
+                    if(data.success == 1) {
+                        alert("data deleted");
+                        $("#id").val("");
+                        $("#RegNo").val("");
+                        $("#fine").val("");
+                        $("#fineAmo").val("");
+                        $("#polid").val("");
+                        $("#polnam").val("");
+                        $("#loca").val("");
+                        $("#RegName").val("");
+                        $("#Addr").val("");
+                        $("#phn").val("");
+                        $("#email").val("");
+                        $("#voilation").val("");
+                        $("#save").show();
+                        $("#delete").hide();
+                        $("#update").hide();
+                        show();
+                    }
+                    else {
+                        alert("data not deleted");
+                    }
+                }
+            });
+        }
+    }
+    
+</script>

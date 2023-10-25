@@ -1,0 +1,65 @@
+﻿<center>
+   
+    <h1>User Detailes</h1>
+    <div  id="table"></div>
+
+</center>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    Show();
+    function Show()
+    {
+        $.ajax({
+            url: "/Master/show",
+            method:"GET",
+            dataType: 'JSON',
+            success: function (data) {
+                if (data.success != "")
+                {
+                    $("#table").html(data.success);
+                }
+            }
+        });
+    }
+    function Blockusr(id) {
+        //alert(id)
+        $.ajax({
+            url: "/Master/blocked?id=" + id,
+            method:"POST",
+            dataType:'JSON',
+            success: function (data)
+            {
+                Show();
+                alert("User Blocked Successfully")
+            }
+        });
+    }
+    function Unblockusr(id) {
+       // alert(id)
+        $.ajax({
+            url: "/Master/unblocked?id=" + id,
+            method:"POST",
+            dataType:'JSON',
+            success: function (data)
+            {
+                alert("User Unblocked Successfully")
+                Show();
+            }
+        });
+    }
+    function Delete(idd) {
+        if (window.confirm("Do you want to delete?")) {
+            $.ajax({
+                url: "/Master/Deleted?idd=" + idd,
+                method: "POST",
+                dataType: 'JSON',
+                success: function (data) {
+                    if (data.success == true) {
+                        alert("User Deleted Successfully")
+                        Show();
+                    }
+                }
+            });
+        }
+    }
+</script>

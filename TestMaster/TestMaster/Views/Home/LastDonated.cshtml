@@ -1,0 +1,84 @@
+﻿@inject IHttpContextAccessor contxt;
+<div class="container">
+    <!-- /.card-header -->
+    <form>
+        <div>
+            <input type="hidden" id="id" value=@contxt.HttpContext.Session.GetInt32("Id") />
+        </div>
+        <div>
+           <label>Patient Name</label>
+           <input type="text" class="form-control" id="patientname" placeholder="Enter your name" >
+        </div>
+        <div>
+           <label>Hostpital</label>
+           <input type="text" class="form-control" id="hospital" placeholder="Enter hospital">
+         </div>
+        <div>
+           <label>Blood Type</label>
+           <select class="form-control" id="Bloodtype">
+             <option value="">select</option>
+           </select>
+        </div>
+        <div>
+          <label>Donated Date:</label>
+            <input type="date" id="date" class="form-control" />
+        </div>
+        <div>
+         <label>Location</label>
+         <input type="text" class="form-control" id="Location" placeholder="Enter your location">
+        </div>
+       
+    </form>
+    <div class="bg-light text-center">
+        <input class="btn btn-primary" type="button" id="save" value="save" onclick="Insert()" />
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    BloodType();
+    function BloodType() {
+        $.ajax({
+            url: "/Master/SelectBldType",
+            method: 'GET',
+            dataType: 'JSON',
+            success: function (data) {
+                $("#Bloodtype").html(data.success);
+
+            }
+        });
+    }
+    function Insert() {
+        var LastDonated =
+        {
+            'PatientName': $("#patientname").val(),
+            'Hospital': $("#hospital").val(),
+            'BloodDonatedType': $("#Bloodtype").val(),
+            'Date': $("#date").val(),
+            'Location': $("#Location").val(),
+            'LoginId': $("#id").val(),
+        }
+        $.ajax({
+            url: "/Master/LastDonatedInsert",
+            method: 'POST',
+            dataType: 'JSON',
+            data: LastDonated,
+            success: function (data) {
+                if (data.success == 1) {
+                    alert("Data inserted");
+                    //$("#patientname").val("");
+                    //$("#hospital").val("");
+                    //$("#Bloodtype").val("");
+                    //$("#date").val("");
+                    //$("#Location").val("");
+                }
+                else {
+                    alert("Data not inserted");
+                }
+
+            }
+        });
+
+    }
+
+
+</script>

@@ -1,0 +1,382 @@
+﻿}
+@{
+    Layout = "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | Log in</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="../../plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+</head>
+<body>
+    <div>
+    <center><b></b><h2>SIGN-UP FORM</h2></center><br /><br />
+    </div>
+<!-- general form elements disabled -->
+ <div class="container">
+    
+    <!-- /.card-header -->
+   
+       
+        <form>
+          <div class="row">
+            <div class="col-sm-6">
+               <label>Country</label>
+                <select class="form-control" id="SelCountry">
+                 <option value="">select</option>
+                </select>
+            </div>
+            <div class="col-sm-6">
+               <label>State</label>
+                <select class="form-control" id="SelState">
+                <option value="">select</option>
+                </select>
+             </div>
+          </div>
+           <div class="row">
+            <div class="col-sm-6">
+               <label>District</label>
+                <select class="form-control" id="SelDistrict">
+                <option value="">select</option>
+                </select>
+            </div >
+                <div class="col-sm-6">
+              <label>City</label>
+              <select class="form-control" id="SelCty">
+                 <option value="">select</option>
+              </select>
+            </div>
+           </div>
+         <div class="row">
+                <div class="col-sm-6">
+              <label>Name</label>
+                    <input type="text" class="form-control" id="usname" placeholder="Enter your name" onblur="Name()">
+            </div>
+                <div class="col-sm-6">
+              <label>Phone No</label>
+                    <input type="text" class="form-control" id="phnno" placeholder="Enter your phone number">
+            </div>
+          </div>
+          <div class="row">
+                <div class="col-sm-6">
+              <label>Date Of Birth:</label>
+              <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                 <input type="date" id="dob" class="form-control datetimepicker-input" data-target="#reservationdate" />
+              </div>
+            </div>
+
+                <div class="col-sm-6">
+              <label>Password</label>
+                    <input type="password" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" placeholder="Password" id="pswd" required>
+            </div>
+          </div>
+         <div class="row">
+             <div class="col-sm-6">
+              <label>Blood Group</label>
+                <select class="form-control" id="SelBlood">
+                   <option value="">select</option>
+                </select>
+             </div>
+             <div class="col-sm-6">
+              <div>
+               <label>Have you donated previously?</label>
+              </div>
+                    <input type="radio" id="yes" name="Donner" value="Yes"/>
+                    <label for="Donner">Yes</label><br>
+                    <input type="radio" id="no" name="Donner" value="No"/>
+                    <label for="Donner">No</label><br>
+             </div>
+         </div>
+         <div class="row">
+              <div class="col-sm-6">
+                <label>In the last six months have you had any of the following?</label>
+                 <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="checkbox1">
+                   <label class="form-check-label">Tattooing</label>
+                 </div>
+                 <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="checkbox2" checked>
+                   <label class="form-check-label">Dental Extraction</label>
+                 </div>
+                 <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="checkbox3">
+                   <label class="form-check-label">Ear Piercing</label>
+                 </div>
+             </div>
+              <div class="col-sm-6">
+                 <label>Are you taking or have you taken any of these in the past 72 hours?</label>
+                  <div class="form-check">
+                        <input class="form-check-input" type="checkbox">
+                        <label class="form-check-label">Aspirin</label>
+                  </div>
+                  <div class="form-check">
+                        <input class="form-check-input" type="checkbox" checked>
+                        <label class="form-check-label">Steroids</label>
+                  </div>
+                  <div class="form-check">
+                        <input class="form-check-input" type="checkbox">
+                        <label class="form-check-label">Alcohol</label>
+                  </div>
+                  <div class="form-check">
+                        <input class="form-check-input" type="checkbox">
+                        <label class="form-check-label">Antibiotics</label>
+                  </div>
+             </div>
+         </div>
+               
+        </form>
+        <div class="bg-light text-center">
+            <input class="btn btn-primary" type="button" id="save" value="save" onclick="Insert()" />
+            <button class="btn btn-white"><a asp-area="" asp-controller="Home" asp-action="LoginPage">already have account?</a></button>
+        </div>
+    <!-- /.card-body -->
+ </div>
+    <script src="../../plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="../../dist/js/adminlte.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script>
+
+        function Name() {
+            var checked =
+            {
+                'UserName': $("#usname").val(),
+            }
+            $.ajax({
+                url: "/Master/CheckName",
+                method: 'GET',
+                dataType: 'JSON',
+                data: checked,
+                success: function (data) {
+                    if (data.success == true) {
+
+                       if(data.val!="")
+                       {
+                           alert(data.val);
+                            $("#usname").val("")
+                       }
+                      
+                    }
+                    
+                }
+            });
+        }
+        SelCount();
+        //check();
+        function SelCount(x = "") {
+            $.ajax({
+                url: "/Master/SelectCountry?x="+x,
+                method:'GET',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#SelCountry").html(data.success);
+
+                }
+            });
+        }
+        $(document).on("change", "#SelCountry", function () {
+            var id = $(this).val();
+          //  alert(id)
+            $.ajax({
+                url: "/Master/SelectState?id=" + id,
+                method: 'POST',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#SelState").html(data.success);
+                }
+            });
+        });
+        $(document).on("change", "#SelState", function () {
+            var id = $(this).val();
+           // alert(id)
+            $.ajax({
+                url: "/Master/SelectDistrict?id=" + id,
+                method: 'POST',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#SelDistrict").html(data.success);
+                }
+            });
+        });
+        $(document).on("change", "#SelDistrict", function () {
+            var id = $(this).val();
+           // alert(id)
+            $.ajax({
+                url: "/Master/SelCity?id=" + id,
+                method: 'POST',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#SelCty").html(data.success);
+                }
+            });
+        });
+        SeLBlood();
+        function SeLBlood(x="") {
+
+            $.ajax({
+                url: "/Master/SelectBldGrp?x="+ x,
+                method: 'GET',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#SelBlood").html(data.success);
+
+                }
+            });
+        }
+        //var pw = document.getElementById("pswd").value;
+        //check empty password field
+        //if (pw == "") {
+        //    document.getElementById("message").innerHTML = "**Fill the password please!";
+        //    return false;
+        //}
+
+        //minimum password length validation
+        //if (pw.length < 8) {
+        //    document.getElementById("message").innerHTML = "**Password length must be atleast 8 characters";
+        //    return false;
+        //}
+
+        //maximum length of password validation
+        //if (pw.length > 15) {
+        //    document.getElementById("message").innerHTML = "**Password length must not exceed 15 characters";
+        //    return false;
+        //} else {
+        //    alert("Password is correct");
+        //}
+        //}
+        //function check(Donner) {
+        //    alert(Donner);
+        //    document.getElementById("radio").value = Donner;
+        //}
+        //if (data.gender == "Male") {
+        //    //alert("A")
+        //    $("#male").prop('checked', true);
+        //}
+        //if (data.gender == "female") {
+        //    $("#female").prop('checked', true);
+        //}
+        //if (data.gender == "Others")
+        //{
+        //    $("#others").prop('checked', true);
+        //}
+        function Insert() {
+
+            if ($("#SelCountry").val() == "") {
+                alert("Country name is null");
+                return false;
+            }
+
+
+            if ($("#SelState").val() == "") {
+                alert("state name is null");
+                return false;
+            }
+
+
+            if ($("#SelDistrict").val() == "") {
+                alert("district name is null");
+                return false;
+            }     
+            if ($("#SelCty").val() == "") {
+                alert("city name is null");
+                return false;
+            }     
+            if ($("#SelBlood").val() == "") {
+                alert("select blood group ");
+                return false;
+            }     
+            if ($("#phnno").val() == "") {
+                alert("Phone number  is null");
+                return false;
+            }         
+            if ($("#dob").val() == "") {
+                alert("Date of birth is null");
+                return false;
+            }    
+            if ($("#usname").val() == "") {
+                alert("Name is null");
+                return false;
+            } 
+            if ($("#pswd").val() == "") {
+                alert("password is null");
+                return false;
+            }
+           
+
+            var a =($("#yes").is(":checked"));
+            var b = ($("#no").is(":checked"));
+          //  alert(a)
+          //  alert(b)
+           if(a == true){
+             var radio = a
+           }
+           if(b == true){
+               var radio = b
+           }
+          // alert(radio)
+            //var login =
+            //{
+               
+
+            //}
+            var signup =
+            {
+                'CountryType': $("#SelCountry").val(),
+                'StateType': $("#SelState").val(),
+                'DistrictType': $("#SelDistrict").val(),
+                'CityType': $("#SelCty").val(),
+                'BloodType': $("#SelBlood").val(),
+                'PhnNo': $("#phnno").val(),
+                'DoB': $("#dob").val(),
+                'Donnated': radio,
+                'UserName': $("#usname").val(),
+                'Password': $("#pswd").val()
+            }
+            
+            //var model = {
+            //    'TestModel': login,
+            //    'SignupModel': signup, 
+            //}
+            $.ajax({
+               url: "/Master/SignInsert",
+               method: 'POST',
+               dataType: 'JSON',
+                data: signup,
+               success: function (data) {
+                   if (data.success == true) {
+                        alert("Data inserted");
+                        $("#SelCountry").val("");
+                        $("#SelState").val("");
+                        $("#SelDistrict").val("");
+                        $("#SelCty").val("");
+                        $("#SelBlood").val("");
+                        $("#phnno").val("");
+                        $("#dob").val("");
+                        $("#radio").val("");
+                        $("#usname").val("");
+                        $("#pswd").val("");
+                   }
+                   else 
+                   {
+                         alert("Data not inserted");
+                   }
+               }
+            });
+        }
+    
+
+    </script>
+</body>
+</html>

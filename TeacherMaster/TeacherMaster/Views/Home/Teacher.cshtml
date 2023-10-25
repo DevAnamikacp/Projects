@@ -1,0 +1,183 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div>
+    <div class="container">
+        <form id="form" method="post">
+            <div class="row-mb-2">
+                <div>
+                    <label for="text">Teacher Reg</label>
+                    <input class="form-control" type="text" id="techreg" />
+                </div>
+                <div>
+                    <label for="text">Teacher Name</label>
+                    <input class="form-control" type="text" id="techname" />
+                </div>
+                <div>
+                    <label for="text">Email</label>
+                    <input class="form-control" type="text" id="email" />
+                </div>
+                <div>
+                    <label for="text">Phone No</label>
+                    <input class="form-control" type="text" id="phno" />
+                </div>
+                <div>
+                    <input type="button" value="save" id="save" onclick="Insert()" />
+                    <input type="button" value="Update" id="update" onclick="Update()" />
+                    <input type="button" value="Delete" id="delete" onclick="Delete()" />
+                </div>
+                <input type="hidden" id="id" />
+
+            </div>
+        </form>
+        <div id="table"></div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    Show();
+    $("#delete").hide();
+    $("#update").hide();
+    $("#save").show();
+    function Insert()
+    {
+        if ($("#techreg").val() == "") {
+            alert("Register number cannot be null");
+            return false;
+        }
+        if ($("#techname").val() == "") {
+            alert("Teacher name cannot be null");
+            return false;
+        }
+        if ($("#email").val() == "") {
+            alert("email name cannot be null");
+            return false;
+        }
+        var insert =
+        {
+            'Treg': $("#techreg").val(),
+            'TName': $("#techname").val(),
+            'Email': $("#email").val(),
+            'Phno': $("#phno").val(),
+        }
+        $.ajax({
+            url: '/Teacher/insert',
+            method: 'POST',
+            dataType: 'JSON',
+            data: insert,
+            success: function (data) {
+                if (data.success == 1) {
+                    alert("data insert");
+                    $("#techreg").val(""),
+                    $("#techname").val(""),
+                    $("#email").val(""),
+                    $("#phno").val(""),
+                    Show();
+
+                }
+                else 
+                {
+                    alert("data not insert");
+                }
+            }
+        });
+    }
+    $("#phno").keyup(function () {
+        var a = this.value
+        var b = a.replace(/[a-z-A-Z ]/g, '');
+        $("#phno").val(b);
+        return false
+    });
+    function Show() {
+        $.ajax({
+            url: '/Teacher/Show',
+            method: 'POST',
+            dataType: 'JSON',
+            success: function (data) {
+                $("#table").html(data.success);
+            }
+        });
+    }
+    function Edit(id) {
+        alert(id)
+        $.ajax({
+            url: '/Teacher/edit?id=' + id,
+            method: 'POST',
+            dataType: 'JSON',
+            success: function (data) {
+                $("#id").val(data.id);
+                $("#techreg").val(data.treg),
+                $("#techname").val(data.tname),
+                $("#email").val(data.eml),
+                $("#phno").val(data.phn),
+                $("#delete").show();
+                $("#update").show();
+                $("#save").hide();
+            }
+        });
+    }
+
+    function Update() {
+        var updated =
+        {
+            'Id': $("#id").val(),
+            'Treg': $("#techreg").val(),
+            'TName': $("#techname").val(),
+            'Email': $("#email").val(),
+            'Phno': $("#phno").val(),
+        }
+        $.ajax({
+            url: '/Teacher/Updated',
+            method: 'POST',
+            dataType: 'JSON',
+            data: updated,
+            success: function (data) {
+                if (data.success == 1) {
+                    alert("data updated");
+                    $("#id").val("");
+                    $("#techreg").val("");
+                    $("#techname").val("");
+                    $("#email").val("");
+                    $("#phno").val("");
+                    Show();
+                }
+                else {
+                    alert("data not updated");
+                }
+            }
+        });
+    }
+
+    function Delete() {
+        if (window.confirm("Do you want to delete?")) {
+            var id = $("#id").val();
+            $.ajax({
+                url: '/Teacher/Delete?id='+ id,
+                method: "GET",
+                dataType: 'JSON',
+                success: function (data) {
+                    if (data.success == 1) {
+                        alert("data deleted");           
+                        $("#id").val("");
+                        $("#techreg").val("");
+                        $("#techname").val("");
+                        $("#email").val("");
+                        $("#phno").val("");
+                        $("#save").show();
+                        $("#delete").hide();
+                        $("#update").hide();
+                        Show();
+                    }
+                    else {
+                        alert("data not deleted")
+                    }
+                }
+            });
+
+        }
+    }
+</script>
+
+

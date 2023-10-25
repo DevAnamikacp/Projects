@@ -1,0 +1,97 @@
+﻿
+<div>
+    <div class="container">
+        <form id="form" method="post">
+            <div>
+                <div>
+                    <label for="text">User Name</label>
+                    <input class="form-control" type="text" id="username" />
+                </div>
+                <div>
+                    <label for="eml">Password</label>
+                    <input class="form-control" type="password" id="pswd" />
+                </div>
+                
+                <div class="col m-4">
+                    <button class="btn btn-primary" type="button" id="save" value="Login" onclick="Checked()">Save</button>
+                </div>
+                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Register?</a>
+             
+            </div>
+            
+        </form>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    function Checked() 
+    { 
+       // a = $("#username").val();
+       // b = $("#pswd").val();
+       var chek=
+       {
+        'Pswrd': $("#pswd").val(),
+        'Email': $("#username").val(),
+       }
+        $.ajax({
+            url:"/Signin/Chec",
+            method:"GET",
+            dataType: 'JSON',
+            data: chek,
+            success:function(data)
+            {
+                //$("#pswd").val("");
+                //$("#username").val("");
+                if (data.success == true) 
+                {
+                   // $("#login").hide();
+                    //var userid=data.userid;
+                   // alert(data.val);
+                    if ((data.val) == 3)
+                    {
+                       
+                      window.location.href = ("SuperUserPage");
+                       
+                      
+                      
+                    }
+                    
+                    else if ((data.val) == 2)
+                    {
+                       
+                        window.location.href = ("UserHomePage");
+                       
+                    }
+                    else if ((data.val) == 1) 
+                    {
+                        //$.ajax({
+                        //    url: "/Signin/lastlogin?userid=" + userid,
+                        //    method: "GET",
+                        //    dataType: 'JSON',
+                        //    success: function (data) {
+                        //        if (data.success == 1) {
+                                   
+                               // }
+                           // }
+                        //});
+                        window.location.href=("AdminHomePage");
+
+                    }
+                    else if ((data.val) == 4) {
+                        alert("BLOCKED")
+                    }
+                    else
+                    {
+                        alert("false")
+                    }
+                  
+                }
+                else
+                {
+                    alert("Invalid")
+                }
+            }
+        });
+    }
+   
+</script>

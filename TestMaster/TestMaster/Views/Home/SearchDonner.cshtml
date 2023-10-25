@@ -1,0 +1,141 @@
+﻿@inject IHttpContextAccessor contxt;
+<div class="container">
+    <!-- /.card-header -->
+    <form>
+       
+<div class="row">
+        <div>
+            <input type="hidden" id="id" value=@contxt.HttpContext.Session.GetInt32("Id") />
+        </div>
+    <div class="col-sm-6">
+        <label>Country</label>
+        <select class="form-control" id="SelCountry">
+            <option value="">select</option>
+        </select>
+    </div>
+    <div class="col-sm-6">
+        <label>State</label>
+        <select class="form-control" id="SelState">
+            <option value="">select</option>
+        </select>
+    </div>
+</div>
+ <div class="row">
+    <div class="col-sm-6">
+        <label>District</label>
+        <select class="form-control" id="SelDistrict">
+            <option value="">select</option>
+        </select>
+    </div>
+    <div class="col-sm-6">
+        <label>City</label>
+        <select class="form-control" id="SelCty">
+            <option value="">select</option>
+        </select>
+    </div>
+ </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <label>Blood Group</label>
+            <select class="form-control" id="SelBlood">
+                <option value="">select</option>
+            </select>
+        </div>
+    </div>
+        <br /><br />
+        <div class="bg-light text-center">
+            <input class="btn btn-primary" type="button" id="search" value="search" onclick="Donners()" />
+        </div>
+  </form>
+  <br /><br />
+ <div id="table"></div>
+</div>
+ <script src="~/lib/jquery/dist/jquery.js"></script>
+ <script>
+    SeLBlood();
+    function SeLBlood(x = "") {
+
+        $.ajax({
+            url: "/Master/SelectBldGrp?x=" + x,
+            method: 'GET',
+            dataType: 'JSON',
+            success: function (data) {
+                $("#SelBlood").html(data.success);
+
+            }
+        });
+    }
+        SelCount();
+        //check();
+        function SelCount(x = "") {
+            $.ajax({
+                url: "/Master/SelectCountry?x=" + x,
+                method: 'GET',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#SelCountry").html(data.success);
+
+                }
+            });
+        }
+        $(document).on("change", "#SelCountry", function () {
+            var id = $(this).val();
+            //  alert(id)
+            $.ajax({
+                url: "/Master/SelectState?id=" + id,
+                method: 'POST',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#SelState").html(data.success);
+                }
+            });
+        });
+        $(document).on("change", "#SelState", function () {
+            var id = $(this).val();
+            // alert(id)
+            $.ajax({
+                url: "/Master/SelectDistrict?id=" + id,
+                method: 'POST',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#SelDistrict").html(data.success);
+                }
+            });
+        });
+        $(document).on("change", "#SelDistrict", function () {
+            var id = $(this).val();
+            // alert(id)
+            $.ajax({
+                url: "/Master/SelCity?id=" + id,
+                method: 'POST',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#SelCty").html(data.success);
+                }
+            });
+        });
+   function Donners()
+   {
+     var checked =
+     {
+       'CountryType': $("#SelCountry").val(),
+       'StateType': $("#SelState").val(),
+       'DistrictType': $("#SelDistrict").val(),
+       'CityType': $("#SelCty").val(),
+       'BloodType': $("#SelBlood").val(),
+     }
+    $.ajax({
+         url: "/Master/SearchDonner",
+         method: 'GET',
+         dataType: 'JSON',
+         data: checked,
+         success: function (data)
+         {
+          if (data.success != "")
+          {
+            $("#table").html(data.success);
+          }
+         }
+    });
+   }   
+</script>
